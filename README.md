@@ -2,7 +2,16 @@
 
 Welcome to the Advent of Code[^aoc] Kotlin project created by [pascalhonegger][github] using the [Advent of Code Kotlin Template][template] delivered by JetBrains.
 
-In this repository, pascalhonegger is about to provide solutions for the puzzles using [Kotlin][kotlin] language.
+In this repository, PascalHonegger is about to provide solutions for the puzzles using [Kotlin][kotlin] language.
+
+To run it yourself, use one of the following CLI commands:
+```shell
+# JVM
+./amper run -m jvm-cli
+
+# Windows Native
+./amper run -m win-cli
+```
 
 If you're stuck with Kotlin-specific questions or anything related to this template, check out the following resources:
 

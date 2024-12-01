@@ -1,0 +1,9 @@
+product: jvm/app
+
+dependencies:
+  - ../shared
+
+settings:
+  jvm:
+    mainClass: MainKt
+    release: 21
