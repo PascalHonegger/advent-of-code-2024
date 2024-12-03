@@ -8,12 +8,18 @@ import kotlinx.io.readByteString
  * Reads lines from the given input txt file.
  */
 fun readInput(name: String): List<String> {
+    return readInputAsText(name).lines()
+}
+
+/**
+ * Reads text from the given input txt file
+ */
+fun readInputAsText(name: String): String {
     return SystemFileSystem.source(Path("../inputs/$name.txt"))
         .buffered()
         .readByteString()
         .decodeToString()
         .trim()
-        .lines()
 }
 
 /**

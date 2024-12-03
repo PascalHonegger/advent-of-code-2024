@@ -23,6 +23,6 @@ fun day02() {
 
     // Read the input from the `src/Day02.txt` file.
     val input = readInput("Day02")
-    println(part2(input))
     println(part1(input))
+    println(part2(input))
 }
