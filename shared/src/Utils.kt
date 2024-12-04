@@ -95,6 +95,16 @@ fun <E> List<List<E>>.transpose(): List<List<E>> {
     }
 }
 
+fun List<String>.get2D(x: Int, y: Int): Char? {
+    if (y in indices) {
+        val row = get(y)
+        if (x in row.indices) {
+            return row[x]
+        }
+    }
+    return null
+}
+
 inline fun <T> Iterable<T>.sumOfIndexed(transform: (index: Int, T) -> Int) = mapIndexed(transform).sum()
 
 val IntRange.simpleSize get() = last - first + 1
