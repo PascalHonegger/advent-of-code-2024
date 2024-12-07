@@ -1,6 +1,6 @@
 product:
   type: lib
-  platforms: [ jvm, mingwX64 ]
+  platforms: [ jvm, mingwX64, macosArm64 ]
 
 dependencies:
   - org.jetbrains.kotlinx:kotlinx-io-core:0.6.0

@@ -2,3 +2,4 @@ modules:
   - shared
   - win-cli
   - jvm-cli
+  - mac-cli

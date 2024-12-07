@@ -11,6 +11,9 @@ To run it yourself, use one of the following CLI commands:
 
 # Windows Native
 ./amper run -m win-cli
+
+# Mac Arm64 Native
+./amper run -m mac-cli
 ```
 
 If you're stuck with Kotlin-specific questions or anything related to this template, check out the following resources:
