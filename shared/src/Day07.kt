@@ -1,12 +1,13 @@
+import kotlinx.coroutines.*
 import kotlin.time.measureTime
 
+@OptIn(DelicateCoroutinesApi::class)
 fun day07() {
     data class Equation(val solution: Long, val parts: List<Long>)
 
-    fun solveIt(equations: List<Equation>, withPipeOperator: Boolean): Long {
-
-        return equations
-            .filter { eq ->
+    fun solveIt(equations: List<Equation>, withPipeOperator: Boolean): Long = runBlocking {
+        equations
+            .map { eq ->
                 val cache = mutableMapOf<List<Long>, MutableSet<Long>>()
 
                 fun addToCache(key: List<Long>, value: Set<Long>) {
@@ -32,7 +33,7 @@ fun day07() {
                         }
 
                         if (newValue >= eq.solution)
-                            // all operations only increase the value, no point in going down this path
+                        // all operations only increase the value, no point in going down this path
                             return emptySet()
 
                         workingSet.addFirst(newValue)
@@ -59,15 +60,18 @@ fun day07() {
                     workingSet.addFirst(a)
                     return possibleSolutions
                 }
-                try {
-                    performCalculation()
-                } catch (_: Exception) {
-                    // Hacky way to early return
-                    return@filter true
+                GlobalScope.async {
+                    try {
+                        performCalculation()
+                    } catch (_: Exception) {
+                        // Hacky way to early return
+                        return@async Pair(eq.solution, true)
+                    }
+                    Pair(eq.solution, eq.solution in cache.getOrElse(eq.parts) { mutableSetOf() })
                 }
-                eq.solution in cache.getOrElse(eq.parts) { mutableSetOf() }
-            }
-            .sumOf { it.solution }
+            }.awaitAll()
+            .filter { it.second }
+            .sumOf { it.first }
     }
 
     fun part1(equations: List<Equation>): Long = solveIt(equations, withPipeOperator = false)
