@@ -8,57 +8,43 @@ fun day07() {
     fun solveIt(equations: List<Equation>, withPipeOperator: Boolean): Long = runBlocking {
         equations
             .map { eq ->
-                val cache = mutableMapOf<List<Long>, MutableSet<Long>>()
-
-                fun addToCache(key: List<Long>, value: Set<Long>) {
-                    if (value.isEmpty()) return
-                    val set = cache.getOrPut(key) { mutableSetOf() }
-                    set += value
-                }
-
                 val workingSet = ArrayDeque(eq.parts)
 
-                fun performCalculation(): Set<Long> {
+                fun performCalculation() {
                     if (workingSet.size == 1) {
-                        return setOf(workingSet.single())
+                        return
                     }
-                    val key = workingSet.toList()
-
                     val a = workingSet.removeFirst()
                     val b = workingSet.removeFirst()
 
-                    fun performOperation(newValue: Long): Set<Long> {
+                    fun performOperation(newValue: Long) {
                         if (newValue == eq.solution && workingSet.isEmpty()) {
                             error("found it!")
                         }
 
-                        if (newValue >= eq.solution)
-                        // all operations only increase the value, no point in going down this path
-                            return emptySet()
+                        if (newValue >= eq.solution) {
+                            // all operations only increase the value, no point in going down this path
+                            return
+                        }
 
                         workingSet.addFirst(newValue)
-                        val result = performCalculation()
-                        addToCache(key, result)
+                        performCalculation()
                         workingSet.removeFirst()
-                        return result
                     }
 
-                    val possibleSolutions = mutableSetOf<Long>()
-
                     // Try +
-                    possibleSolutions += performOperation(a + b)
+                    performOperation(a + b)
 
                     // Try *
-                    possibleSolutions += performOperation(a * b)
+                    performOperation(a * b)
 
                     // Try ||
                     if (withPipeOperator) {
-                        possibleSolutions += performOperation("${a}${b}".toLong())
+                        performOperation("${a}${b}".toLong())
                     }
 
                     workingSet.addFirst(b)
                     workingSet.addFirst(a)
-                    return possibleSolutions
                 }
                 GlobalScope.async {
                     try {
@@ -67,7 +53,7 @@ fun day07() {
                         // Hacky way to early return
                         return@async Pair(eq.solution, true)
                     }
-                    Pair(eq.solution, eq.solution in cache.getOrElse(eq.parts) { mutableSetOf() })
+                    Pair(eq.solution, false)
                 }
             }.awaitAll()
             .filter { it.second }
