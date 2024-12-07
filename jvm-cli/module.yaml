@@ -4,6 +4,8 @@ dependencies:
   - ../shared
 
 settings:
+  kotlin:
+    progressiveMode: true
   jvm:
     mainClass: MainKt
     release: 21

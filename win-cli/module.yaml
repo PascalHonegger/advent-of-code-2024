@@ -4,3 +4,8 @@ product:
 
 dependencies:
   - ../shared
+
+settings:
+  kotlin:
+    progressiveMode: true
+    debug: false
