@@ -105,6 +105,15 @@ fun List<String>.get2D(x: Int, y: Int): Char? {
     return null
 }
 
+fun <T> MutableList<T>.swap(index1: Int, index2: Int, sizeToSwap: Int = 1) {
+    require(sizeToSwap > 0)
+    repeat(sizeToSwap) {
+        val tmp = this[index1 + it]
+        this[index1 + it] = this[index2 + it]
+        this[index2 + it] = tmp
+    }
+}
+
 inline fun <T> Iterable<T>.sumOfIndexed(transform: (index: Int, T) -> Int) = mapIndexed(transform).sum()
 
 val IntRange.simpleSize get() = last - first + 1
