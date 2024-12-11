@@ -116,4 +116,6 @@ fun <T> MutableList<T>.swap(index1: Int, index2: Int, sizeToSwap: Int = 1) {
 
 inline fun <T> Iterable<T>.sumOfIndexed(transform: (index: Int, T) -> Int) = mapIndexed(transform).sum()
 
+operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> = Pair(first + other.first, second + other.second)
+
 val IntRange.simpleSize get() = last - first + 1
