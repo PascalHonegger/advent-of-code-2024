@@ -41,20 +41,12 @@ fun day10() {
     }
 
     // Or read a large test input from the `src/Day10_test.txt` file:
-    val testInput = readInput("Day10_test").flatMapIndexed { y, row ->
-        row.mapIndexed { x, c ->
-            Pair(x, y) to c.digitToInt()
-        }
-    }.toMap()
+    val testInput = readInput("Day10_test").toPointMap().mapValues { it.value.digitToInt() }
     check(part1(testInput) == 36)
     check(part2(testInput) == 81)
 
     // Read the input from the `src/Day10.txt` file.
-    val input = readInput("Day10").flatMapIndexed { y, row ->
-        row.mapIndexed { x, c ->
-            Pair(x, y) to c.digitToInt()
-        }
-    }.toMap()
+    val input = readInput("Day10").toPointMap().mapValues { it.value.digitToInt() }
     measureTime {
         println(part1(input))
     }.also { println("Part1 took $it") }

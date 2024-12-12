@@ -105,6 +105,12 @@ fun List<String>.get2D(x: Int, y: Int): Char? {
     return null
 }
 
+fun List<String>.toPointMap(): Map<Pair<Int, Int>, Char> = flatMapIndexed { y, row ->
+    row.mapIndexed { x, c ->
+        Pair(x, y) to c
+    }
+}.toMap()
+
 fun <T> MutableList<T>.swap(index1: Int, index2: Int, sizeToSwap: Int = 1) {
     require(sizeToSwap > 0)
     repeat(sizeToSwap) {
