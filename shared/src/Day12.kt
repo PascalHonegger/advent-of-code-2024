@@ -42,19 +42,33 @@ fun day12() {
             val area = region.size
             fun countSides(directionToCheck: Pair<Int, Int>, scanTopDown: Boolean): Long {
                 var count = 0L
-                for (x in xRange) {
-                    for (y in yRange) {
-                        val point = Pair(x, y)
-                        if (point !in region) continue
-                        val hasRelevantWall = (point + directionToCheck) !in region
-                        val hasAdjacentWall = if (scanTopDown) {
-                            (point + Pair(0, -1)) in region &&
-                            (point + Pair(0, -1) + directionToCheck) !in region
-                        } else {
-                            (point + Pair(-1, 0)) in region &&
-                            (point + Pair(-1, 0) + directionToCheck) !in region
+                if (scanTopDown) {
+                    for (x in xRange) {
+                        var hadRelevantWall = false
+                        for (y in yRange) {
+                            val point = Pair(x, y)
+                            if (point !in region) {
+                                hadRelevantWall = false
+                                continue
+                            }
+                            val hasRelevantWall = (point + directionToCheck) !in region
+                            if (hasRelevantWall && !hadRelevantWall) count++
+                            hadRelevantWall = hasRelevantWall
                         }
-                        if (hasRelevantWall && !hasAdjacentWall) count++
+                    }
+                } else {
+                    for (y in yRange) {
+                        var hadRelevantWall = false
+                        for (x in xRange) {
+                            val point = Pair(x, y)
+                            if (point !in region) {
+                                hadRelevantWall = false
+                                continue
+                            }
+                            val hasRelevantWall = (point + directionToCheck) !in region
+                            if (hasRelevantWall && !hadRelevantWall) count++
+                            hadRelevantWall = hasRelevantWall
+                        }
                     }
                 }
                 return count
