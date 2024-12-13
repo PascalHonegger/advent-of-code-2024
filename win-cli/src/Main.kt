@@ -1,1 +1,1 @@
-fun main() = day12()
+fun main() = day13()
