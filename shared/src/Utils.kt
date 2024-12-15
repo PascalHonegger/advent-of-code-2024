@@ -111,6 +111,15 @@ fun List<String>.toPointMap(): Map<Pair<Int, Int>, Char> = flatMapIndexed { y, r
     }
 }.toMap()
 
+fun Map<Pair<Int, Int>, Char>.printMap() {
+    for (y in 0..maxOf { it.key.second }) {
+        for (x in 0..maxOf { it.key.first }) {
+            print(get(Pair(x, y)))
+        }
+        kotlin.io.println()
+    }
+}
+
 fun <T> MutableList<T>.swap(index1: Int, index2: Int, sizeToSwap: Int = 1) {
     require(sizeToSwap > 0)
     repeat(sizeToSwap) {
@@ -122,6 +131,7 @@ fun <T> MutableList<T>.swap(index1: Int, index2: Int, sizeToSwap: Int = 1) {
 
 inline fun <T> Iterable<T>.sumOfIndexed(transform: (index: Int, T) -> Int) = mapIndexed(transform).sum()
 
-operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> = Pair(first + other.first, second + other.second)
+operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> =
+    Pair(first + other.first, second + other.second)
 
 val IntRange.simpleSize get() = last - first + 1
