@@ -1,10 +1,10 @@
 fun day06() {
     fun part1(input: String): Int {
-        val visited = mutableSetOf<Pair<Int, Int>>()
+        val visited = mutableSetOf<Position>()
         val obstacles = input.lineSequence().flatMapIndexed { y, row ->
             row.mapIndexed { x, c ->
                 if (c == '#') {
-                    Pair(x, y)
+                    Position(x, y)
                 } else null
             }
         }.filterNotNull().toSet()
@@ -12,26 +12,20 @@ fun day06() {
         val validY = 0..<input.lineSequence().count()
         check(validX == validY)
 
-        var direction = Pair(0, -1)
+        var direction = Direction.UP
         var position = input.lineSequence().flatMapIndexed { y, row ->
             row.mapIndexed { x, c ->
                 if (c == '^') {
-                    Pair(x, y)
+                    Position(x, y)
                 } else null
             }
         }.filterNotNull().single()
 
-        while (position.first in validX && position.second in validY) {
+        while (position.x in validX && position.y in validY) {
             visited += position
-            val nextPosition = Pair(position.first + direction.first, position.second + direction.second)
+            val nextPosition = position + direction
             if (nextPosition in obstacles) {
-                direction = when (direction) {
-                    Pair(0, -1) -> Pair(1, 0)
-                    Pair(1, 0) -> Pair(0, 1)
-                    Pair(0, 1) -> Pair(-1, 0)
-                    Pair(-1, 0) -> Pair(0, -1)
-                    else -> error("Unsupported direction")
-                }
+                direction = direction.clockwise()
             } else {
                 position = nextPosition
             }

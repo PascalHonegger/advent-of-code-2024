@@ -1,30 +1,30 @@
 import kotlin.time.measureTime
 
 fun day10() {
-    fun countPathsToTops(topographicMap: Map<Pair<Int, Int>, Int>, pos: Pair<Int, Int>, distinct: Boolean): Int {
-        val visitedTops: MutableCollection<Pair<Int, Int>> = if (distinct) mutableSetOf() else mutableListOf()
-        fun countPathsToTops(pos: Pair<Int, Int>, prevValue: Int) {
+    fun countPathsToTops(topographicMap: PointMap<Int>, pos: Position, distinct: Boolean): Int {
+        val visitedTops: MutableCollection<Position> = if (distinct) mutableSetOf() else mutableListOf()
+        fun countPathsToTops(pos: Position, prevValue: Int) {
             val value = topographicMap[pos]
             when {
                 value == null || value != prevValue + 1 -> Unit
                 value == 9 -> visitedTops.add(pos)
                 else -> {
-                    countPathsToTops(pos + Pair(1, 0), value)
-                    countPathsToTops(pos + Pair(0, 1), value)
-                    countPathsToTops(pos + Pair(-1, 0), value)
-                    countPathsToTops(pos + Pair(0, -1), value)
+                    countPathsToTops(pos + Direction.UP, value)
+                    countPathsToTops(pos + Direction.RIGHT, value)
+                    countPathsToTops(pos + Direction.DOWN, value)
+                    countPathsToTops(pos + Direction.LEFT, value)
                 }
             }
         }
 
-        countPathsToTops(pos + Pair(1, 0), 0)
-        countPathsToTops(pos + Pair(0, 1), 0)
-        countPathsToTops(pos + Pair(-1, 0), 0)
-        countPathsToTops(pos + Pair(0, -1), 0)
+        countPathsToTops(pos + Direction.UP, 0)
+        countPathsToTops(pos + Direction.RIGHT, 0)
+        countPathsToTops(pos + Direction.DOWN, 0)
+        countPathsToTops(pos + Direction.LEFT, 0)
         return visitedTops.size
     }
 
-    fun part1(topographicMap: Map<Pair<Int, Int>, Int>): Int {
+    fun part1(topographicMap: PointMap<Int>): Int {
         return topographicMap.entries.sumOf { (pos, v) ->
             if (v != 0) return@sumOf 0
 
@@ -32,7 +32,7 @@ fun day10() {
         }
     }
 
-    fun part2(topographicMap: Map<Pair<Int, Int>, Int>): Int {
+    fun part2(topographicMap: PointMap<Int>): Int {
         return topographicMap.entries.sumOf { (pos, v) ->
             if (v != 0) return@sumOf 0
 

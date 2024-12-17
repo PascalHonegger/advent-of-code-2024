@@ -1,52 +1,52 @@
 import kotlin.time.measureTime
 
 fun day12() {
-    fun Map<Pair<Int, Int>, Char>.forEachRegion(block: (region: Set<Pair<Int, Int>>) -> Unit) {
+    fun PointMap<Char>.forEachRegion(block: (region: Set<Position>) -> Unit) {
         val notYetVisited = toMutableMap()
         while (notYetVisited.isNotEmpty()) {
             val (start, plot) = notYetVisited.entries.first()
-            val region = mutableSetOf<Pair<Int, Int>>()
-            fun visit(pos: Pair<Int, Int>) {
+            val region = mutableSetOf<Position>()
+            fun visit(pos: Position) {
                 if (notYetVisited[pos] != plot) return
                 notYetVisited.remove(pos)
                 region += pos
-                visit(pos + Pair(1, 0))
-                visit(pos + Pair(-1, 0))
-                visit(pos + Pair(0, 1))
-                visit(pos + Pair(0, -1))
+                visit(pos + Direction.UP)
+                visit(pos + Direction.RIGHT)
+                visit(pos + Direction.DOWN)
+                visit(pos + Direction.LEFT)
             }
             visit(start)
             block(region)
         }
     }
 
-    fun part1(garden: Map<Pair<Int, Int>, Char>): Long {
+    fun part1(garden: PointMap<Char>): Long {
         var runningSum = 0L
         garden.forEachRegion { region ->
             val area = region.size
-            val perimeter = region.count { !region.contains(it + Pair(1, 0)) } +
-                    region.count { !region.contains(it + Pair(-1, 0)) } +
-                    region.count { !region.contains(it + Pair(0, 1)) } +
-                    region.count { !region.contains(it + Pair(0, -1)) }
+            val perimeter = region.count { (it + Direction.UP) !in region } +
+                    region.count { (it + Direction.RIGHT) !in region } +
+                    region.count { (it + Direction.DOWN) !in region } +
+                    region.count { (it + Direction.LEFT) !in region }
 
             runningSum += area * perimeter
         }
         return runningSum
     }
 
-    fun part2(garden: Map<Pair<Int, Int>, Char>): Long {
+    fun part2(garden: PointMap<Char>): Long {
         var runningSum = 0L
-        val xRange = 0..garden.maxOf { it.key.first }
-        val yRange = 0..garden.maxOf { it.key.second }
+        val xRange = 0..garden.maxOf { it.key.x }
+        val yRange = 0..garden.maxOf { it.key.y }
         garden.forEachRegion { region ->
             val area = region.size
-            fun countSides(directionToCheck: Pair<Int, Int>, scanTopDown: Boolean): Long {
+            fun countSides(directionToCheck: Direction, scanTopDown: Boolean): Long {
                 var count = 0L
                 if (scanTopDown) {
                     for (x in xRange) {
                         var hadRelevantWall = false
                         for (y in yRange) {
-                            val point = Pair(x, y)
+                            val point = Position(x, y)
                             if (point !in region) {
                                 hadRelevantWall = false
                                 continue
@@ -60,7 +60,7 @@ fun day12() {
                     for (y in yRange) {
                         var hadRelevantWall = false
                         for (x in xRange) {
-                            val point = Pair(x, y)
+                            val point = Position(x, y)
                             if (point !in region) {
                                 hadRelevantWall = false
                                 continue
@@ -74,10 +74,10 @@ fun day12() {
                 return count
             }
 
-            val numberOfSides = countSides(Pair(1, 0), true) +
-                    countSides(Pair(-1, 0), true) +
-                    countSides(Pair(0, 1), false) +
-                    countSides(Pair(0, -1), false)
+            val numberOfSides = countSides(Direction.LEFT, true) +
+                    countSides(Direction.RIGHT, true) +
+                    countSides(Direction.UP, false) +
+                    countSides(Direction.DOWN, false)
 
             runningSum += area * numberOfSides
         }

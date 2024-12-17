@@ -1,31 +1,31 @@
 import kotlin.time.measureTime
 
 fun day14() {
-    data class Robot(var position: Pair<Int, Int>, val velocity: Pair<Int, Int>)
+    data class Robot(var position: Position, val velocity: Direction)
 
     val robotPattern = "p=(-?\\d+),(-?\\d+) v=(-?\\d+),(-?\\d+)".toRegex()
 
     fun String.toRobot(): Robot {
         val values = robotPattern.matchEntire(this)!!.groupValues.drop(1).map { it.toInt() }
         return Robot(
-            position = Pair(values[0], values[1]),
-            velocity = Pair(values[2], values[3]),
+            position = Position(values[0], values[1]),
+            velocity = Direction(values[2], values[3]),
         )
     }
 
     fun Robot.moveWithin(space: Pair<Int, Int>) {
         position += velocity
-        if (position.first < 0) {
-            position = position.copy(first = space.first + position.first)
+        if (position.x < 0) {
+            position = position.copy(x = space.first + position.x)
         }
-        if (position.second < 0) {
-            position = position.copy(second = space.second + position.second)
+        if (position.y < 0) {
+            position = position.copy(y = space.second + position.y)
         }
-        if (position.first >= space.first) {
-            position = position.copy(first = position.first - space.first)
+        if (position.x >= space.first) {
+            position = position.copy(x = position.x - space.first)
         }
-        if (position.second >= space.second) {
-            position = position.copy(second = position.second - space.second)
+        if (position.y >= space.second) {
+            position = position.copy(y = position.y - space.second)
         }
     }
 
@@ -34,7 +34,7 @@ fun day14() {
         val string = buildString {
             repeat(space.second) { y ->
                 repeat(space.first) { x ->
-                    append(if (map.containsKey(Pair(x, y))) "x" else " ")
+                    append(if (map.containsKey(Position(x, y))) "x" else " ")
                 }
                 appendLine()
             }
@@ -58,10 +58,10 @@ fun day14() {
         val horizontalSplit = space.first / 2
         val verticalSplit = space.second / 2
         return listOf(
-            robots.count { it.position.first < horizontalSplit && it.position.second < verticalSplit },
-            robots.count { it.position.first < horizontalSplit && it.position.second > verticalSplit },
-            robots.count { it.position.first > horizontalSplit && it.position.second < verticalSplit },
-            robots.count { it.position.first > horizontalSplit && it.position.second > verticalSplit },
+            robots.count { it.position.x < horizontalSplit && it.position.y < verticalSplit },
+            robots.count { it.position.x < horizontalSplit && it.position.y > verticalSplit },
+            robots.count { it.position.x > horizontalSplit && it.position.y < verticalSplit },
+            robots.count { it.position.x > horizontalSplit && it.position.y > verticalSplit },
         ).product()
     }
 

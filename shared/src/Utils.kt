@@ -105,16 +105,62 @@ fun List<String>.get2D(x: Int, y: Int): Char? {
     return null
 }
 
-fun List<String>.toPointMap(): Map<Pair<Int, Int>, Char> = flatMapIndexed { y, row ->
+data class Position(val x: Int, val y: Int)
+
+data class Direction(val x: Int, val y: Int) {
+
+    override fun toString(): String = when (this) {
+        LEFT -> "<"
+        DOWN -> "v"
+        RIGHT -> ">"
+        UP -> "^"
+        else -> "($x, $y)"
+    }
+
+    companion object {
+        val UP = Direction(0, -1)
+        val DOWN = Direction(0, 1)
+        val LEFT = Direction(-1, 0)
+        val RIGHT = Direction(1, 0)
+
+        fun fromChar(value: Char): Direction = when (value) {
+            '<' -> LEFT
+            'v' -> DOWN
+            '>' -> RIGHT
+            '^' -> UP
+            else -> throw IllegalArgumentException("Unknown direction: $value")
+        }
+    }
+}
+
+fun Direction.clockwise() = when (this) {
+    Direction.UP -> Direction.RIGHT
+    Direction.RIGHT -> Direction.DOWN
+    Direction.DOWN -> Direction.LEFT
+    Direction.LEFT -> Direction.UP
+    else -> error("Unsupported direction to rotate clockwise: $this")
+}
+
+fun Direction.counterclockwise() = when (this) {
+    Direction.UP -> Direction.LEFT
+    Direction.LEFT -> Direction.DOWN
+    Direction.DOWN -> Direction.RIGHT
+    Direction.RIGHT -> Direction.UP
+    else -> error("Unsupported direction to rotate counterclockwise: $this")
+}
+
+typealias PointMap<T> = Map<Position, T>
+
+fun List<String>.toPointMap(): PointMap<Char> = flatMapIndexed { y, row ->
     row.mapIndexed { x, c ->
-        Pair(x, y) to c
+        Position(x, y) to c
     }
 }.toMap()
 
-fun Map<Pair<Int, Int>, Char>.printMap() {
-    for (y in 0..maxOf { it.key.second }) {
-        for (x in 0..maxOf { it.key.first }) {
-            print(get(Pair(x, y)))
+fun PointMap<Char>.printMap() {
+    for (y in 0..maxOf { it.key.y }) {
+        for (x in 0..maxOf { it.key.x }) {
+            print(get(Position(x, y)))
         }
         kotlin.io.println()
     }
@@ -131,7 +177,7 @@ fun <T> MutableList<T>.swap(index1: Int, index2: Int, sizeToSwap: Int = 1) {
 
 inline fun <T> Iterable<T>.sumOfIndexed(transform: (index: Int, T) -> Int) = mapIndexed(transform).sum()
 
-operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> =
-    Pair(first + other.first, second + other.second)
+operator fun Position.plus(direction: Direction): Position =
+    Position(x = x + direction.x, y = y + direction.y)
 
 val IntRange.simpleSize get() = last - first + 1
