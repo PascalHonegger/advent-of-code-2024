@@ -3,6 +3,7 @@ import kotlinx.io.bytestring.decodeToString
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteString
+import kotlin.jvm.JvmInline
 
 /**
  * Reads lines from the given input txt file.
@@ -105,7 +106,9 @@ fun List<String>.get2D(x: Int, y: Int): Char? {
     return null
 }
 
-data class Position(val x: Int, val y: Int)
+data class Position(val x: Int, val y: Int) {
+    override fun toString(): String = "($x, $y)"
+}
 
 data class Direction(val x: Int, val y: Int) {
 
@@ -174,6 +177,65 @@ fun <T> MutableList<T>.swap(index1: Int, index2: Int, sizeToSwap: Int = 1) {
         this[index2 + it] = tmp
     }
 }
+
+@JvmInline
+value class Weight(val value: Int)
+
+operator fun Weight.plus(other: Weight) = Weight(value + other.value)
+operator fun Weight.compareTo(other: Weight) = value.compareTo(other.value)
+
+inline fun <T> dijkstraWeights(start: T, getVisitablePositions: (key: T) -> Sequence<Pair<T, Weight>>): Map<T, Weight> {
+    val distances = mutableMapOf<T, Weight>().withDefault { Weight(Int.MAX_VALUE) }
+    val priorityQueue = PriorityQueue<Pair<T, Weight>>(compareBy { it.second.value })
+    val visited = mutableSetOf<Pair<T, Weight>>()
+
+    priorityQueue.offer(start to Weight(0))
+    distances[start] = Weight(0)
+
+    while (!priorityQueue.isEmpty) {
+        val (node, currentDist) = priorityQueue.poll()
+        if (visited.add(node to currentDist)) {
+            getVisitablePositions(node).forEach { (adjacent, weight) ->
+                val totalDist = currentDist + weight
+                if (totalDist < distances.getValue(adjacent)) {
+                    distances[adjacent] = totalDist
+                    priorityQueue.offer(adjacent to totalDist)
+                }
+            }
+        }
+    }
+    return distances
+}
+
+inline fun <T> dijkstraPaths(start: T, getVisitablePositions: (key: T) -> Sequence<Pair<T, Weight>>): Pair<Map<T, Weight>, Map<T, List<T>>> {
+    val distances = mutableMapOf<T, Weight>().withDefault { Weight(Int.MAX_VALUE) }
+    val prevs = mutableMapOf<T, List<T>>().withDefault { emptyList() }
+    val priorityQueue = PriorityQueue<Pair<T, Weight>>(compareBy { it.second.value })
+    val visited = mutableSetOf<Pair<T, Weight>>()
+
+    priorityQueue.offer(start to Weight(0))
+    distances[start] = Weight(0)
+    prevs[start] = emptyList()
+
+    while (!priorityQueue.isEmpty) {
+        val (node, currentDist) = priorityQueue.poll()
+        if (visited.add(node to currentDist)) {
+            getVisitablePositions(node).forEach { (adjacent, weight) ->
+                val totalDist = currentDist + weight
+                val adjacentDist = distances.getValue(adjacent)
+                if (totalDist < adjacentDist) {
+                    distances[adjacent] = totalDist
+                    prevs[adjacent] = listOf(node)
+                    priorityQueue.offer(adjacent to totalDist)
+                } else if (totalDist == adjacentDist) {
+                    prevs[adjacent] = prevs.getValue(adjacent) + node
+                }
+            }
+        }
+    }
+    return Pair(distances, prevs)
+}
+
 
 inline fun <T> Iterable<T>.sumOfIndexed(transform: (index: Int, T) -> Int) = mapIndexed(transform).sum()
 
