@@ -110,6 +110,8 @@ data class Position(val x: Int, val y: Int) {
     override fun toString(): String = "($x, $y)"
 }
 
+fun String.toPosition(delimiter: String = ",") = split(delimiter).let { (x, y) -> Position(x.toInt(), y.toInt()) }
+
 data class Direction(val x: Int, val y: Int) {
 
     override fun toString(): String = when (this) {
@@ -125,6 +127,7 @@ data class Direction(val x: Int, val y: Int) {
         val DOWN = Direction(0, 1)
         val LEFT = Direction(-1, 0)
         val RIGHT = Direction(1, 0)
+        val ALL = listOf(UP, RIGHT, DOWN, LEFT)
 
         fun fromChar(value: Char): Direction = when (value) {
             '<' -> LEFT
