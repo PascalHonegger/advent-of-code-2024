@@ -4,6 +4,7 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteString
 import kotlin.jvm.JvmInline
+import kotlin.math.abs
 
 /**
  * Reads lines from the given input txt file.
@@ -110,6 +111,8 @@ data class Position(val x: Int, val y: Int) {
     override fun toString(): String = "($x, $y)"
 }
 
+fun Position.distanceTo(other: Position) = abs(x - other.x) + abs(y - other.y)
+
 fun String.toPosition(delimiter: String = ",") = split(delimiter).let { (x, y) -> Position(x.toInt(), y.toInt()) }
 
 data class Direction(val x: Int, val y: Int) {
@@ -163,7 +166,7 @@ fun List<String>.toPointMap(): PointMap<Char> = flatMapIndexed { y, row ->
     }
 }.toMap()
 
-fun PointMap<Char>.printMap() {
+fun PointMap<Any>.printMap() {
     for (y in 0..maxOf { it.key.y }) {
         for (x in 0..maxOf { it.key.x }) {
             print(get(Position(x, y)))
