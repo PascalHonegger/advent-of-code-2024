@@ -111,7 +111,7 @@ data class Position(val x: Int, val y: Int) {
     override fun toString(): String = "($x, $y)"
 }
 
-fun Position.distanceTo(other: Position) = abs(x - other.x) + abs(y - other.y)
+fun Position.manhattanDistanceTo(other: Position) = abs(x - other.x) + abs(y - other.y)
 
 fun String.toPosition(delimiter: String = ",") = split(delimiter).let { (x, y) -> Position(x.toInt(), y.toInt()) }
 

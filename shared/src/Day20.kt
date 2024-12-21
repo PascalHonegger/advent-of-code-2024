@@ -32,8 +32,8 @@ fun day20() {
         val distanceMap = calculateDistanceMap(maze)
 
         return distanceMap.entries.sumOf { (key, value) ->
-            val cheatedMins = distanceMap.filter { it.key.distanceTo(key) <= 20 }
-            cheatedMins.count { (value - it.key.distanceTo(key) - it.value) >= minCheatCodeSaving }
+            val cheatedMins = distanceMap.filter { it.key.manhattanDistanceTo(key) <= 20 }
+            cheatedMins.count { (value - it.key.manhattanDistanceTo(key) - it.value) >= minCheatCodeSaving }
         }
     }
 
