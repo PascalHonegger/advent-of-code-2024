@@ -3,3 +3,4 @@ modules:
   - win-cli
   - jvm-cli
   - mac-cli
+  - lin-cli

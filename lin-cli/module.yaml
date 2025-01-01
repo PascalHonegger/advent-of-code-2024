@@ -1,0 +1,11 @@
+product:
+  type: linux/app
+  platforms: [ linuxX64 ]
+
+dependencies:
+  - ../shared
+
+settings:
+  kotlin:
+    progressiveMode: true
+    debug: false
